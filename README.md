@@ -3,7 +3,7 @@
 In this project, I used Amazon product co-purchase data to make book recommendations using Social Network Analysis in Python. The recommendations are chosen based on their scores in a composite measure of four metrics (Sales Rank, Total Reviews, Average Rating, DegreeCentrality - although Clustering Coefficient is also available, I have not considered this metric in the composite measure), using the networkx package.
 I used the Amazon Meta-Data Set maintained on the SNAP site. This data set is comprised of product and review metadata on 548,552 different products. The data was collected in 2006 by crawling the Amazon website. 
 
-The first step we have to perform is read, preprocess, and format this data for further analysis. The Python script called PreprocessAmazonBooks.py (created by Dr. Hina Arora at ASU) takes the “amazon-meta.txt” file as input, and performs the following steps:
+The first step we have to perform is read, preprocess, and format this data for further analysis. The Python script called PreprocessAmazonBooks.py (created by Dr. Hina Arora at ASU) takes the Amazon metadata text file as input, and performs the following steps:
 
 •	Parse the amazon-meta.txt file
 
