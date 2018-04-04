@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Nov 20 10:29:32 2016
-
-@author: hina
-"""
-print ()
 
 import networkx
 from operator import itemgetter
@@ -39,14 +33,12 @@ fhr=open("amazon-books-copurchase.edgelist", 'rb')
 copurchaseGraph=networkx.read_weighted_edgelist(fhr)
 fhr.close()
 
-# Now let's assume a person is considering buying the following book;
-# what else can we recommend to them based on copurchase behavior 
-# we've seen from other users?
+#Assuming the customer purchases a book with the following ASIN (adjustable)
 print ("Looking for Recommendations for Customer Purchasing this Book:")
 print ("--------------------------------------------------------------")
 purchasedAsin = '0805047905'
 
-# Let's first get some metadata associated with this book
+# Getting metadata associated with this book
 print ("ASIN = ", purchasedAsin) 
 print ("Title = ", amazonBooks[purchasedAsin]['Title'])
 print ("SalesRank = ", amazonBooks[purchasedAsin]['SalesRank'])
@@ -55,47 +47,32 @@ print ("AvgRating = ", amazonBooks[purchasedAsin]['AvgRating'])
 print ("DegreeCentrality = ", amazonBooks[purchasedAsin]['DegreeCentrality'])
 print ("ClusteringCoeff = ", amazonBooks[purchasedAsin]['ClusteringCoeff'])
     
-# Now let's look at the ego network associated with purchasedAsin in the
+# Creating ego network associated with purchasedAsin in the
 # copurchaseGraph - which is esentially comprised of all the books 
 # that have been copurchased with this book in the past
-# (1) YOUR CODE HERE: 
-#     Get the depth-1 ego network of purchasedAsin from copurchaseGraph,
-#     and assign the resulting graph to purchasedAsinEgoGraph.
+
 purchasedAsinEgoGraph = networkx.ego_graph(copurchaseGraph, purchasedAsin, radius = 1 )
 
 
-# Next, recall that the edge weights in the copurchaseGraph is a measure of
-# the similarity between the books connected by the edge. So we can use the 
-# island method to only retain those books that are highly simialr to the 
-# purchasedAsin
-# (2) YOUR CODE HERE: 
-#     Use the island method on purchasedAsinEgoGraph to only retain edges with 
-#     threshold >= 0.5, and assign resulting graph to purchasedAsinEgoTrimGraph
+# Edge weights in the copurchaseGraph is a measure of
+# the similarity between the books connected by the edge.
+#Retaining only those books that are highly similar to the purchasedAsin
+
 threshold = 0.5
 purchasedAsinEgoTrimGraph = networkx.Graph()
 for f, t, e in purchasedAsinEgoGraph.edges(data = True):
     if e['weight'] >= threshold:
         purchasedAsinEgoTrimGraph.add_edge(f,t,e)
 
-# Next, recall that given the purchasedAsinEgoTrimGraph you constructed above, 
-# you can get at the list of nodes connected to the purchasedAsin by a single 
+# getting list of nodes connected to the purchasedAsin by a single 
 # hop (called the neighbors of the purchasedAsin) 
-# (3) YOUR CODE HERE: 
-#     Find the list of neighbors of the purchasedAsin in the 
-#     purchasedAsinEgoTrimGraph, and assign it to purchasedAsinNeighbors
+
 purchasedAsinNeighbors = purchasedAsinEgoTrimGraph.neighbors(purchasedAsin)
 
-# Next, let's pick the Top Five book recommendations from among the 
-# purchasedAsinNeighbors based on one or more of the following data of the 
-# neighboring nodes: SalesRank, AvgRating, TotalReviews, DegreeCentrality, 
-# and ClusteringCoeff
-# (4) YOUR CODE HERE: 
-#     Note that, given an asin, you can get at the metadata associated with  
-#     it using amazonBooks (similar to lines 49-56 above).
-#     Now, come up with a composite measure to make Top Five book 
-#     recommendations based on one or more of the following metrics associated 
-#     with nodes in purchasedAsinNeighbors: SalesRank, AvgRating, 
-#     TotalReviews, DegreeCentrality, and ClusteringCoeff 
+# The Top Five book recommendations from among the 
+# purchasedAsinNeighbors based on the following data of the 
+# neighboring nodes: SalesRank, AvgRating, TotalReviews, and DegreeCentrality.
+# (ClusteringCoeff not used in this project, and commented out)
 
 salesrank = {}
 totalreviews = {}
@@ -110,7 +87,7 @@ for asin in purchasedAsinNeighbors:
     dc[asin] = amazonBooks[asin]['DegreeCentrality']
 #    clusteringcoefflist.append(amazonBooks[asin]['ClusteringCoeff'])
 
-#here we adjust/normalize the scales for sales rank, number of reviews, and degree of centrality
+# Here we adjust/normalize the scales for sales rank, number of reviews, and degree of centrality
 
 normsalesrank = {}
 for asin,v in salesrank.items():
@@ -137,7 +114,6 @@ weightedlist = sorted(weightedlist, key=itemgetter(1), reverse = True)
 
 # Print Top 5 recommendations (ASIN, and associated Title, Sales Rank, 
 # TotalReviews, AvgRating, DegreeCentrality, ClusteringCoeff)
-# (5) YOUR CODE HERE:  
 
 top5asin = []
 top5 = {}
